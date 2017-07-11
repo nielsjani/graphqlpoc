@@ -48,4 +48,9 @@ public class AnnotatedDb {
     public List<PokemonGameAnnotated> getAll() {
         return pokemonGames;
     }
+
+    public PokemonGameAnnotated add(PokemonGameAnnotated newgame) {
+        pokemonGames.add(newgame);
+        return newgame;
+    }
 }

@@ -9,6 +9,7 @@ import graphql.schema.GraphQLObjectType;
 import graphql.schema.GraphQLSchema;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newHashMap;
@@ -25,7 +26,7 @@ public class MainAnnotations {
     private static final String SIMPLEQUERY = "{games {generation, cities {name, gymLeader}}}";
     private static final String ARGSQUERY = "{games(generation:5) {generation, evilTeam {name}, cities {name, gymLeader}}}";
     private static final String VARIABLESQUERY = "query GetByGen($gen: Int) {games(generation:$gen) {generation, evilTeam {name}, cities {name, gymLeader}}}";
-    private static final String MUTATE = "mutation addgame($newgame: inputPokemonGameAnnotated) {creategame(newgame: $newgame){generation}}";
+    private static final String MUTATE = "mutation addgame($newgame: inputPokemonGameAnnotated) {creategame(newgame: $newgame){generation, evilTeam{primaryColor}}}";
 
     public static void main(String[] args) {
         GraphQLObjectType queryType = newObject()
@@ -46,12 +47,6 @@ public class MainAnnotations {
                         }))
                 .build();
 
-        GraphQLSchema schema = GraphQLSchema.newSchema()
-                .query(queryType)
-                .build();
-
-        GraphQL graphQL = GraphQL.newGraphQL(schema).build();
-
         //EXPERIMENT 1
 //        Map<String, Object> resultSimpleQuery = graphQL.execute(SIMPLEQUERY).getData();
         //EXPERIMENT 2
@@ -63,12 +58,6 @@ public class MainAnnotations {
 //        Map<String, Object> resultVarsQuery = graphQL.execute(VARIABLESQUERY, (Object) null, arguments).getData();
 
         //EXPERIMENT 4
-        String resultMutate = mutate();
-
-        System.out.println(resultMutate);
-    }
-
-    private static String mutate() {
         GraphQLObjectType mutationType = newObject()
                 .name("mutation")
                 .field(newFieldDefinition()
@@ -78,10 +67,7 @@ public class MainAnnotations {
                                 .type(GraphQLAnnotations.inputObject(GraphQLAnnotations.object(PokemonGameAnnotated.class), "input"))
                                 .build())
                         .type(GraphQLAnnotations.object(PokemonGameAnnotated.class))
-                        .dataFetcher(env -> {
-                            PokemonGameAnnotated newgame = env.getArgument("newgame");
-                            return newgame;
-                        }))
+                        .dataFetcher(env -> AnnotatedDb.getInstance().add(env.getArgument("newgame"))))
                 .build();
 
         HashMap<String, Object> arguments = newHashMap();
@@ -95,11 +81,14 @@ public class MainAnnotations {
         arguments.put("newgame", toAdd);
 
         GraphQLSchema schema = GraphQLSchema.newSchema()
-                .query(mutationType)
+                .query(queryType)
+                .mutation(mutationType)
                 .build();
 
         GraphQL graphQL = GraphQL.newGraphQL(schema).build();
 
-        return graphQL.execute(MUTATE, (Object) null, arguments).getData();
+        Map<String, Object> resultMutate = graphQL.execute(MUTATE, (Object) null, arguments).getData();
+
+        System.out.println(resultMutate);
     }
 }

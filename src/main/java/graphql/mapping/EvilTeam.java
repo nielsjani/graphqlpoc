@@ -13,7 +13,6 @@ public class EvilTeam {
 
     @GraphQLField
     public String primaryColor(String bla) {
-        System.out.println(bla);
         return primaryColor;
     }
 
