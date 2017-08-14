@@ -1,13 +1,8 @@
-package graphql.mapping;
-
-import graphql.annotations.GraphQLField;
+package graphqlnew.domain;
 
 public class City {
-    @GraphQLField
     public String name;
-    @GraphQLField
     public boolean evilOrganisationPresent;
-    @GraphQLField
     public String gymLeader;
 
     private City(){}

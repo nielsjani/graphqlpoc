@@ -1,16 +1,11 @@
-package graphql.mapping;
-
-import graphql.annotations.GraphQLField;
+package graphqlnew.domain;
 
 import java.util.List;
 
 public class PokemonGameAnnotated {
 
-    @GraphQLField
     public int generation;
-    @GraphQLField
     public List<City> cities;
-    @GraphQLField
     public EvilTeam evilTeam;
 
     private PokemonGameAnnotated() {
