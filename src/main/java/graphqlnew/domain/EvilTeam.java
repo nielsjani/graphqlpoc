@@ -1,8 +1,11 @@
 package graphqlnew.domain;
 
-public class EvilTeam {
+import graphql.annotations.GraphQLField;
 
+public class EvilTeam {
+    @GraphQLField
     public String name;
+    @GraphQLField
     public String primaryColor;
 
     private EvilTeam(){}

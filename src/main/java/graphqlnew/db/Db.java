@@ -18,6 +18,7 @@ public class Db {
 
     private Db() {
         this.pokemonGames.add(PokemonGameAnnotated.pokemonGameAnnotated()
+                .withId(25)
                 .withGeneration(6)
                 .withEvilTeam(EvilTeam.evilTeam().withName("Flare").withPrimaryColor("Red"))
                 .withCities(Lists.newArrayList(City.city()
@@ -25,6 +26,7 @@ public class Db {
                         .withGymLeader("Clement")
                         .withEvilOrganisationPresent(true))));
         this.pokemonGames.add(PokemonGameAnnotated.pokemonGameAnnotated()
+                .withId(52)
                 .withGeneration(5)
                 .withEvilTeam(EvilTeam.evilTeam().withName("Plasma").withPrimaryColor("Grey"))
                 .withCities(Lists.newArrayList(City.city()
@@ -55,5 +57,11 @@ public class Db {
     public PokemonGameAnnotated add(PokemonGameAnnotated newgame) {
         pokemonGames.add(newgame);
         return newgame;
+    }
+
+    public PokemonGameAnnotated updateCity(int id, City city) {
+        PokemonGameAnnotated pokemonGameAnnotated = pokemonGames.stream().filter(game -> game.id == id).findFirst().orElseThrow(() -> new IllegalArgumentException("Does not exist"));
+        pokemonGameAnnotated.cities.add(city);
+        return pokemonGameAnnotated;
     }
 }

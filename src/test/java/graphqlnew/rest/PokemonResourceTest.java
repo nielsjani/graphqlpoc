@@ -78,4 +78,28 @@ public class PokemonResourceTest {
     EXPECTED: This mutation should add the 'newgame' and return its 'generation' and 'evilTeam' (only 'primaryColor') fields. You can check if it was really added by doing Q-TEST1 again.
     */
 
+    /*
+    Q-TEST2: Adding a city to an existing game
+    URL: localhost:8080/api (POST)
+    BODY:
+    {
+        "query": "mutation updatecity($newcity: inputAddCityDto) {addcity(newcity: $newcity){generation, cities {name}, evilTeam {primaryColor}}}",
+        "keyValueDto": [{
+            "key": "newcity",
+            "value": {
+                "id": 25,
+                "cityDto": {
+                    "name": "REVEH",
+                    "evilOrganisationPresent": false,
+                    "gymLeader": "Satan"
+                }
+            }
+        }]
+    }
+
+    GIVEN: calling a mutation called 'addcity' with a parameter called '$newcity'.
+    EXPECTED: This mutation should add the 'addcity' to the city with id 25 and return its 'generation', 'cities' (name) 'evilTeam' (only 'primaryColor') fields.
+    You can check if it was really updated by doing Q-TEST1 again.
+    */
+
 }

@@ -1,8 +1,13 @@
 package graphqlnew.domain;
 
+import graphql.annotations.GraphQLField;
+
 public class City {
+    @GraphQLField
     public String name;
+    @GraphQLField
     public boolean evilOrganisationPresent;
+    @GraphQLField
     public String gymLeader;
 
     private City(){}

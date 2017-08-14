@@ -1,11 +1,18 @@
 package graphqlnew.domain;
 
+import graphql.annotations.GraphQLField;
+
 import java.util.List;
 
 public class PokemonGameAnnotated {
 
+    @GraphQLField
+    public int id;
+    @GraphQLField
     public int generation;
+    @GraphQLField
     public List<City> cities;
+    @GraphQLField
     public EvilTeam evilTeam;
 
     private PokemonGameAnnotated() {
@@ -27,6 +34,11 @@ public class PokemonGameAnnotated {
 
     public PokemonGameAnnotated withEvilTeam(EvilTeam evilTeam) {
         this.evilTeam = evilTeam;
+        return this;
+    }
+
+    public PokemonGameAnnotated withId(int id) {
+        this.id = id;
         return this;
     }
 }

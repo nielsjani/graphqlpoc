@@ -4,8 +4,6 @@ GraphQL Java library: http://graphql-java.readthedocs.io/en/stable/index.html
 GraphQL Java annotations library: https://github.com/graphql-java/graphql-java-annotations
 
 TODO:
-- Integratie met REST call
-- 'update' mutation
 - 'delete' mutation
 - Interfaces/Unions
 - Directives

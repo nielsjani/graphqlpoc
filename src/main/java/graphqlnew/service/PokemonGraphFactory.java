@@ -6,13 +6,19 @@ import graphql.annotations.GraphQLAnnotations;
 import graphql.schema.GraphQLList;
 import graphql.schema.GraphQLObjectType;
 import graphql.schema.GraphQLSchema;
+import graphqlnew.domain.City;
+import graphqlnew.rest.game.AddCityDto;
+import graphqlnew.rest.game.CityDto;
 import graphqlnew.rest.game.PokemonGameDto;
 import graphqlnew.db.Db;
 import graphqlnew.domain.PokemonGameAnnotated;
+import org.apache.commons.lang3.RandomUtils;
 
 import javax.inject.Named;
 
 import java.util.Arrays;
+import java.util.Random;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static graphql.GraphQL.newGraphQL;
@@ -74,23 +80,46 @@ class PokemonGraphFactory {
                                 .build())
                         .type(GraphQLAnnotations.object(PokemonGameDto.class))
                         .dataFetcher(env -> {
+                            //TODO: map back to dto before returning + change newFieldDefinition.type to PokemonGameDto
                             PokemonGameAnnotated pokemonGameAnnotated = this.mapToDomain(new ObjectMapper().convertValue(env.getArgument("newgame"), PokemonGameDto.class));
                             return Db.getInstance().add(pokemonGameAnnotated);
+                        }))
+                .field(newFieldDefinition()
+                        .name("addcity")
+                        .argument(newArgument()
+                                .name("newcity")
+                                .type(GraphQLAnnotations.inputObject(GraphQLAnnotations.object(AddCityDto.class), "input"))
+                                .build())
+                        .type(GraphQLAnnotations.object(PokemonGameAnnotated.class))
+                        .dataFetcher(env -> {
+                            AddCityDto addCityDto = new ObjectMapper().convertValue(env.getArgument("newcity"), AddCityDto.class);
+                            City city = this.mapToDomain(addCityDto.cityDto);
+                            //TODO: map back to dto before returning + change newFieldDefinition.type to PokemonGameDto
+                            return Db.getInstance().updateCity(addCityDto.id, city);
                         }))
                 .build();
     }
 
+    private City mapToDomain(CityDto cityDto) {
+        return mapCity(cityDto);
+    }
+
     private PokemonGameAnnotated mapToDomain(PokemonGameDto newgame) {
         return pokemonGameAnnotated()
+                .withId(RandomUtils.nextInt(0, 10000))
                 .withGeneration(newgame.generation)
                 .withEvilTeam(evilTeam()
                         .withPrimaryColor(newgame.evilTeam.primaryColor)
                         .withName(newgame.evilTeam.primaryColor))
-                .withCities(Arrays.stream(newgame.cities).map(city -> city()
-                        .withEvilOrganisationPresent(city.evilOrganisationPresent)
-                        .withGymLeader(city.gymLeader)
-                        .withName(city.name))
+                .withCities(Arrays.stream(newgame.cities).map(this::mapCity)
                         .collect(Collectors.toList()));
+    }
+
+    private City mapCity(CityDto cityDto) {
+        return city()
+                .withEvilOrganisationPresent(cityDto.evilOrganisationPresent)
+                .withGymLeader(cityDto.gymLeader)
+                .withName(cityDto.name);
     }
 
     GraphQL getGraph() {
